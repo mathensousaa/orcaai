@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 
 import { useOrcamento } from "../contexts/OrcamentoContext";
 import type { FormOrcamento } from "../types";
+import { useEnviarOrcamentoMutation } from "../services/mutations";
 
 const formSchema = z.object({
   cliente: z.string().min(2, "Nome do cliente deve ter pelo menos 2 caracteres"),
@@ -31,6 +32,7 @@ export function FormularioOrcamento() {
   const navigate = useNavigate();
   const { adicionarOrcamento } = useOrcamento();
   const { toast } = useToast();
+  const enviarOrcamento = useEnviarOrcamentoMutation();
 
   const form = useForm<FormOrcamento>({
     resolver: zodResolver(formSchema),
@@ -49,8 +51,7 @@ export function FormularioOrcamento() {
     setIsLoading(true);
     
     try {
-      // Simula processamento
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await enviarOrcamento.mutateAsync(values);
       
       adicionarOrcamento(values);
       
