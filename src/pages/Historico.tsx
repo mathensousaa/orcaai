@@ -1,7 +1,7 @@
-import { HistoricoOrcamentos } from "../orcamentos/components/HistoricoOrcamentos";
+import { ListaOrcamentos } from "../orcamentos/components/ListaOrcamentos";
 
 const Historico = () => {
-  return <HistoricoOrcamentos />;
+  return <ListaOrcamentos />;
 };
 
 export default Historico;

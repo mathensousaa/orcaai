@@ -1,3 +1,81 @@
+// Database types
+export interface Database {
+  quotes: Quote;
+  clients: Client;
+  companies: Company;
+}
+
+export interface Quote {
+  id: string;
+  quote_number: string;
+  quote_name: string;
+  valid_until: string | null;
+  client_id: string | null;
+  company_id: string | null;
+  subtotal: number;
+  total: number;
+  profit_margin_percent: number;
+  final_price: number;
+  created_at: string;
+  updated_at: string | null;
+  deleted_at: string | null;
+}
+
+export interface Client {
+  id: string;
+  name: string;
+  tax_id: string | null;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  created_at: string;
+  updated_at: string | null;
+  deleted_at: string | null;
+}
+
+export interface Company {
+  id: string;
+  name: string;
+  tax_id: string | null;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  logo_url: string | null;
+  created_at: string;
+  updated_at: string | null;
+  deleted_at: string | null;
+}
+
+// Form types for creating new records
+export interface CreateQuoteForm {
+  quote_name: string;
+  client_id: string;
+  company_id: string | null;
+  subtotal: number;
+  total: number;
+  profit_margin_percent: number;
+  final_price: number;
+  valid_until?: string;
+}
+
+export interface CreateClientForm {
+  name: string;
+  tax_id?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+}
+
+export interface CreateCompanyForm {
+  name: string;
+  tax_id?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  logo_url?: string;
+}
+
+// Legacy types for backward compatibility - to be removed gradually
 export interface Orcamento {
   id: string;
   cliente: string;
