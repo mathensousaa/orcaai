@@ -1,4 +1,4 @@
-import { Home, FileText, History, Calculator } from "lucide-react";
+import { Home, FileText, History, Calculator, ReceiptText } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
 	Sidebar,
@@ -6,6 +6,7 @@ import {
 	SidebarGroup,
 	SidebarGroupContent,
 	SidebarGroupLabel,
+	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
@@ -21,7 +22,7 @@ const navigation = [
 	{
 		title: "Histórico",
 		url: "/historico",
-		icon: History,
+		icon: ReceiptText,
 	},
 ];
 
@@ -31,23 +32,19 @@ export function AppSidebar() {
 
 	return (
 		<Sidebar className={collapsed ? "w-14" : "w-64"} collapsible="icon">
-			<SidebarContent className="bg-gradient-card">
-				<div className="p-6 border-b border-border">
-					<div className="flex items-center gap-3">
-						<div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-							<Calculator className="w-4 h-4 text-white" />
-						</div>
-						{!collapsed && (
-							<div>
-								<h2 className="font-semibold text-foreground">Orçamentos</h2>
-								<p className="text-xs text-muted-foreground">
-									Dashboard Premium
-								</p>
-							</div>
-						)}
+			<SidebarHeader className="bg-gradient-card">
+				<div className="flex items-center gap-3">
+					<div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+						<Calculator className="w-4 h-4 text-white" />
 					</div>
+					{!collapsed && (
+						<div>
+							<h2 className="font-semibold text-foreground">Orça Aí</h2>
+						</div>
+					)}
 				</div>
-
+			</SidebarHeader>
+			<SidebarContent className="bg-gradient-card">
 				<SidebarGroup>
 					<SidebarGroupLabel className="text-muted-foreground font-medium">
 						Navegação
@@ -63,7 +60,7 @@ export function AppSidebar() {
 											className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all"
 										>
 											<item.icon className="h-4 w-4" />
-											{!collapsed && <span>{item.title}</span>}
+											{item.title}
 										</NavLink>
 									</SidebarMenuButton>
 								</SidebarMenuItem>

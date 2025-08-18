@@ -110,11 +110,11 @@ export function OrcamentoGerado() {
 					<div className="flex items-start justify-between">
 						<div>
 							<CardTitle className="text-2xl text-foreground mb-2">
-								Orçamento #{quote.quoteNumber}
+								Orçamento #{quote.quote_number}
 							</CardTitle>
 							<CardDescription className="flex items-center gap-2">
 								<Calendar className="w-4 h-4" />
-								Criado em {formatDate(quote.issueDate)}
+								Criado em {formatDate(quote.created_at)}
 							</CardDescription>
 						</div>
 						{/* <Badge
@@ -165,7 +165,7 @@ export function OrcamentoGerado() {
 								<div>
 									<p className="text-sm text-muted-foreground">Valor Total</p>
 									<p className="text-2xl font-bold text-success">
-										{formatCurrency(quote.financialSummary.finalPrice)}
+										{formatCurrency(quote.final_price)}
 									</p>
 								</div>
 							</div>
@@ -177,9 +177,7 @@ export function OrcamentoGerado() {
 								</div>
 								<div className="flex justify-between items-center text-sm mt-1">
 									<span className="text-muted-foreground">Prazo:</span>
-									<span className="font-medium">
-										{quote.termsAndConditions.deliveryTime}
-									</span>
+									<span className="font-medium">{quote.valid_until}</span>
 								</div>
 							</div>
 						</div>

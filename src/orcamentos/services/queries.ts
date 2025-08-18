@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Quote } from "@/orcamentos/types";
 
 // Query keys
 export const queryKeys = {
@@ -29,7 +30,7 @@ export function useQuotes() {
 }
 
 export function useQuote(id: string) {
-	return useQuery({
+	return useQuery<Quote>({
 		queryKey: queryKeys.quote(id),
 		queryFn: async () => {
 			const { data, error } = await supabase
