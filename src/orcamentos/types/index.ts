@@ -39,9 +39,16 @@ export interface Quote {
 	total: number;
 	profit_margin_percent: number;
 	final_price: number;
+	additional_notes: string | null;
+	delivery_time: string | null;
 	created_at: string;
 	updated_at: string | null;
 	deleted_at: string | null;
+}
+
+export interface QuoteWithClientAndCompany extends Quote {
+	client: Client | undefined;
+	company: Company | undefined;
 }
 
 export interface Client {

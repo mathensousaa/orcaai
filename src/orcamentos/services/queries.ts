@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Quote } from "@/orcamentos/types";
+import type { Quote, QuoteWithClientAndCompany } from "@/orcamentos/types";
+const sb = supabase as any;
 
 // Query keys
 export const queryKeys = {
@@ -17,7 +18,7 @@ export function useQuotes() {
 	return useQuery({
 		queryKey: queryKeys.quotes,
 		queryFn: async () => {
-			const { data, error } = await supabase
+			const { data, error } = await sb
 				.from("quotes")
 				.select("*")
 				.is("deleted_at", null)
@@ -29,11 +30,12 @@ export function useQuotes() {
 	});
 }
 
-export function useQuote(id: string) {
-	return useQuery<Quote>({
+export function useQuote(id: string | undefined) {
+	return useQuery<QuoteWithClientAndCompany>({
 		queryKey: queryKeys.quote(id),
 		queryFn: async () => {
-			const { data, error } = await supabase
+			const sb = supabase as any;
+			const { data: baseQuote, error } = await sb
 				.from("quotes")
 				.select("*")
 				.eq("id", id)
@@ -41,7 +43,31 @@ export function useQuote(id: string) {
 				.maybeSingle();
 
 			if (error) throw error;
-			return data;
+			if (!baseQuote) return null;
+
+			// Manual relations fetch (no FK required)
+			let client = null;
+			let company = null;
+
+			if (baseQuote.client_id) {
+				const { data: c } = await sb
+					.from("clients")
+					.select("*")
+					.eq("id", baseQuote.client_id)
+					.maybeSingle();
+				client = c || null;
+			}
+
+			if (baseQuote.company_id) {
+				const { data: co } = await sb
+					.from("companies")
+					.select("*")
+					.eq("id", baseQuote.company_id)
+					.maybeSingle();
+				company = co || null;
+			}
+
+			return { ...baseQuote, client, company };
 		},
 		enabled: !!id,
 	});
@@ -52,7 +78,7 @@ export function useClients() {
 	return useQuery({
 		queryKey: queryKeys.clients,
 		queryFn: async () => {
-			const { data, error } = await supabase
+			const { data, error } = await sb
 				.from("clients")
 				.select("*")
 				.is("deleted_at", null)
@@ -68,7 +94,7 @@ export function useClient(id: string) {
 	return useQuery({
 		queryKey: queryKeys.client(id),
 		queryFn: async () => {
-			const { data, error } = await supabase
+			const { data, error } = await sb
 				.from("clients")
 				.select("*")
 				.eq("id", id)
@@ -87,7 +113,7 @@ export function useCompanies() {
 	return useQuery({
 		queryKey: queryKeys.companies,
 		queryFn: async () => {
-			const { data, error } = await supabase
+			const { data, error } = await sb
 				.from("companies")
 				.select("*")
 				.is("deleted_at", null)
@@ -103,7 +129,7 @@ export function useCompany(id: string) {
 	return useQuery({
 		queryKey: queryKeys.company(id),
 		queryFn: async () => {
-			const { data, error } = await supabase
+			const { data, error } = await sb
 				.from("companies")
 				.select("*")
 				.eq("id", id)
@@ -119,10 +145,10 @@ export function useCompany(id: string) {
 
 // Quotes with relations
 export function useQuotesWithRelations() {
-	return useQuery({
+	return useQuery<QuoteWithClientAndCompany[] | undefined>({
 		queryKey: ["quotes", "with-relations"] as const,
 		queryFn: async () => {
-			const { data, error } = await supabase
+			const { data, error } = await sb
 				.from("quotes")
 				.select(`
           *,
@@ -143,7 +169,14 @@ export function useQuotesWithRelations() {
 				.order("created_at", { ascending: false });
 
 			if (error) throw error;
-			return data || [];
+
+			const parsedData = data.map((quote) => ({
+				client: quote.clients ?? undefined,
+				company: quote.companies ?? undefined,
+				...quote,
+			}));
+
+			return parsedData || [];
 		},
 	});
 }

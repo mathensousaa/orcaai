@@ -21,10 +21,17 @@ export const OrcamentoProvider: React.FC<OrcamentoProviderProps> = ({ children }
   const [orcamentoAtual, setOrcamentoAtual] = useState<Orcamento | null>(null);
 
   const adicionarOrcamento = (form: FormOrcamento) => {
+    const quantidadeNumber = Number(form.quantidade) || 0;
     const novoOrcamento: Orcamento = {
       id: Date.now().toString(),
-      ...form,
-      valorFinal: calcularValorFinal(form.quantidade, form.margemLucro),
+      cliente: form.cliente,
+      produto: form.produto,
+      quantidade: quantidadeNumber,
+      descricao: form.descricao,
+      prazo: form.prazo,
+      margemLucro: form.margemLucro,
+      observacoes: form.observacoes,
+      valorFinal: calcularValorFinal(quantidadeNumber, form.margemLucro),
       dataCreated: new Date().toISOString(),
       status: 'draft'
     };

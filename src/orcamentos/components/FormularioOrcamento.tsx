@@ -118,27 +118,27 @@ export function FormularioOrcamento() {
 				<CardContent>
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-								<FormField
-									control={form.control}
-									name="cliente"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel className="text-sm font-medium">
-												Cliente
-											</FormLabel>
-											<FormControl>
-												<Input
-													placeholder="Nome do cliente"
-													className="transition-all focus:ring-2 focus:ring-primary/20"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+							<FormField
+								control={form.control}
+								name="cliente"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="text-sm font-medium">
+											Cliente
+										</FormLabel>
+										<FormControl>
+											<Input
+												placeholder="Nome do cliente"
+												className="transition-all focus:ring-2 focus:ring-primary/20"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<FormField
 									control={form.control}
 									name="produto"

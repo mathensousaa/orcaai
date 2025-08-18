@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
 	Search,
@@ -10,6 +10,7 @@ import {
 	Package,
 	Filter,
 	Trash2,
+	Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -22,81 +23,47 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+
 import { useToast } from "@/components/ui/use-toast";
 
 import { useQuotesWithRelations, useDeleteQuoteMutation } from "../services";
 
-// Temporary type until Supabase types are properly generated
-type QuoteWithRelations = {
-	id: string;
-	quote_number: string;
-	quote_name: string;
-	final_price: number;
-	subtotal: number;
-	total: number;
-	profit_margin_percent: number;
-	created_at: string;
-	clients?: {
-		id: string;
-		name: string;
-		email?: string;
-		phone?: string;
-	} | null;
-	companies?: {
-		id: string;
-		name: string;
-		email?: string;
-		logo_url?: string;
-	} | null;
-};
-
 export function ListaOrcamentos() {
 	const [searchTerm, setSearchTerm] = useState("");
-	const {
-		data: quotes = [],
-		isLoading,
-		error,
-	} = useQuotesWithRelations() as {
-		data: QuoteWithRelations[];
-		isLoading: boolean;
-		error: any;
-	};
-	const deleteQuote = useDeleteQuoteMutation();
+	const { data: quotes, isLoading, error } = useQuotesWithRelations();
+	const { mutate: deleteQuote } = useDeleteQuoteMutation();
 	const navigate = useNavigate();
 	const { toast } = useToast();
 
-	const filteredQuotes = quotes.filter((quote) => {
-		const clientName = quote.clients?.name || "";
-		const quoteName = quote.quote_name || "";
+	const filteredQuotes = useMemo(() => {
+		return quotes?.filter((quote) => {
+			const clientName = quote.client?.name || "";
+			const quoteName = quote.quote_name || "";
 
-		return (
-			clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			quoteName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			quote.quote_number.toLowerCase().includes(searchTerm.toLowerCase())
-		);
-	});
+			return (
+				clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				quoteName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				quote.quote_number.toLowerCase().includes(searchTerm.toLowerCase())
+			);
+		});
+	}, [quotes, searchTerm]);
 
 	const handleDeleteQuote = async (id: string) => {
-		try {
-			await deleteQuote.mutateAsync(id);
-			toast({
-				title: "Orçamento excluído",
-				description: "O orçamento foi excluído com sucesso.",
-			});
-		} catch (error) {
-			toast({
-				title: "Erro",
-				description: "Não foi possível excluir o orçamento.",
-				variant: "destructive",
-			});
-		}
+		deleteQuote(id, {
+			onSuccess: () => {
+				toast({
+					title: "Orçamento excluído",
+					description: "O orçamento foi excluído com sucesso.",
+				});
+			},
+			onError: () => {
+				toast({
+					title: "Erro",
+					description: "Não foi possível excluir o orçamento.",
+					variant: "destructive",
+				});
+			},
+		});
 	};
 
 	const formatCurrency = (value: number) => {
@@ -283,11 +250,11 @@ export function ListaOrcamentos() {
 										<div className="flex items-start justify-between">
 											<div>
 												<h3 className="font-semibold text-foreground text-lg">
-													{quote.clients?.name || "Cliente não informado"}
+													{quote.quote_name}
 												</h3>
 												<div className="flex items-center gap-2 text-sm text-muted-foreground">
-													<Package className="w-4 h-4" />
-													{quote.quote_name}
+													<Users className="w-4 h-4" />
+													{quote.client?.name || "Cliente não informado"}
 												</div>
 												<p className="text-xs text-muted-foreground mt-1">
 													#{quote.quote_number}
