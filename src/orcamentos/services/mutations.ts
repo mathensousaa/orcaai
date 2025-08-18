@@ -35,7 +35,8 @@ async function createQuote(data: any) {
   // Generate quote number
   const quoteNumber = `ORÇ-${Date.now()}`;
   
-  const { data: quote, error } = await supabase
+  const sb = supabase as any;
+  const { data: quote, error } = await sb
     .from("quotes")
     .insert({
       ...data,
@@ -49,7 +50,8 @@ async function createQuote(data: any) {
 }
 
 async function createClient(data: any) {
-  const { data: client, error } = await supabase
+  const sb = supabase as any;
+  const { data: client, error } = await sb
     .from("clients")
     .insert(data)
     .select()
@@ -60,7 +62,8 @@ async function createClient(data: any) {
 }
 
 async function createCompany(data: any) {
-  const { data: company, error } = await supabase
+  const sb = supabase as any;
+  const { data: company, error } = await sb
     .from("companies")
     .insert(data)
     .select()
@@ -71,7 +74,8 @@ async function createCompany(data: any) {
 }
 
 async function deleteQuote(id: string) {
-  const { error } = await supabase
+  const sb = supabase as any;
+  const { error } = await sb
     .from("quotes")
     .update({ deleted_at: new Date().toISOString() })
     .eq("id", id);

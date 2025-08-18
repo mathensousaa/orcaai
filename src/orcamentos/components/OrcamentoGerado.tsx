@@ -23,7 +23,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import type { QuoteResponse } from "@/orcamentos/types";
 import { useQuote } from "@/orcamentos/services";
 
 export function OrcamentoGerado() {
@@ -31,7 +30,7 @@ export function OrcamentoGerado() {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const { toast } = useToast();
-	const { data: quote } = useQuote(id);
+	const { data: quote } = useQuote(id!);
 
 	if (!quote) {
 		return (
@@ -73,7 +72,7 @@ export function OrcamentoGerado() {
 	};
 
 	const handleWhatsApp = () => {
-		const message = `Olá! Segue o orçamento:\n\nCliente: ${quote.client.name}\nValor: R$ ${quote.financialSummary.finalPrice.toFixed(2)}\nPrazo: ${quote.termsAndConditions.deliveryTime}\n\nAguardo retorno!`;
+		const message = `Olá! Segue o orçamento:\n\nCliente: ${quote?.client?.name ?? "N/I"}\nValor: ${formatCurrency(Number(quote?.final_price ?? 0))}\nValidade: ${quote?.valid_until ? new Date(quote.valid_until).toLocaleDateString("pt-BR") : "N/I"}\n\nAguardo retorno!`;
 		const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
 		window.open(whatsappUrl, "_blank");
 	};
@@ -110,11 +109,11 @@ export function OrcamentoGerado() {
 					<div className="flex items-start justify-between">
 						<div>
 							<CardTitle className="text-2xl text-foreground mb-2">
-								Orçamento #{quote.quoteNumber}
+								Orçamento #{quote.quote_number}
 							</CardTitle>
 							<CardDescription className="flex items-center gap-2">
 								<Calendar className="w-4 h-4" />
-								Criado em {formatDate(quote.issueDate)}
+								Criado em {formatDate(quote.created_at)}
 							</CardDescription>
 						</div>
 						{/* <Badge
@@ -137,7 +136,7 @@ export function OrcamentoGerado() {
 								<div>
 									<p className="text-sm text-muted-foreground">Cliente</p>
 									<p className="font-semibold text-foreground">
-										{quote.client.name}
+									{quote.client?.name ?? "Cliente não informado"}
 									</p>
 								</div>
 							</div>
@@ -151,7 +150,7 @@ export function OrcamentoGerado() {
 										Produto/Serviço
 									</p>
 									<p className="font-semibold text-foreground">
-										{quote.items[0].description}
+									{quote.quote_name}
 									</p>
 								</div>
 							</div>
@@ -165,20 +164,20 @@ export function OrcamentoGerado() {
 								<div>
 									<p className="text-sm text-muted-foreground">Valor Total</p>
 									<p className="text-2xl font-bold text-success">
-										{formatCurrency(quote.financialSummary.finalPrice)}
+									{formatCurrency(Number(quote.final_price))}
 									</p>
 								</div>
 							</div>
 
 							<div className="bg-muted/50 rounded-lg p-4">
 								<div className="flex justify-between items-center text-sm">
-									<span className="text-muted-foreground">Quantidade:</span>
-									<span className="font-medium">{quote.items[0].quantity}</span>
+									<span className="text-muted-foreground">Subtotal:</span>
+									<span className="font-medium">{formatCurrency(Number(quote.subtotal))}</span>
 								</div>
 								<div className="flex justify-between items-center text-sm mt-1">
-									<span className="text-muted-foreground">Prazo:</span>
+									<span className="text-muted-foreground">Validade:</span>
 									<span className="font-medium">
-										{quote.termsAndConditions.deliveryTime}
+										{quote.valid_until ? new Date(quote.valid_until).toLocaleDateString("pt-BR") : "N/I"}
 									</span>
 								</div>
 							</div>
@@ -198,16 +197,6 @@ export function OrcamentoGerado() {
                 </p>
               </div> */}
 
-						{quote.termsAndConditions.additionalNotes && (
-							<div>
-								<h3 className="font-semibold text-foreground mb-2">
-									Observações Adicionais
-								</h3>
-								<p className="text-muted-foreground leading-relaxed bg-muted/30 rounded-lg p-4">
-									{quote.termsAndConditions.additionalNotes}
-								</p>
-							</div>
-						)}
 					</div>
 				</CardContent>
 			</Card>
