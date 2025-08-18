@@ -4,7 +4,7 @@ import type { FormOrcamento } from "../types";
 import { queryKeys } from "./queries";
 
 const WEBHOOK_URL =
-	"https://n8n.matheusousa.dev/webhook-test/2d6dc45e-3582-4527-a639-ef248068022b" as const;
+	"https://n8n.matheusousa.dev/webhook/2d6dc45e-3582-4527-a639-ef248068022b" as const;
 
 // Webhook function
 async function postEnviarOrcamento(payload: FormOrcamento) {
