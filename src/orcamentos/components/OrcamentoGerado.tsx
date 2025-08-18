@@ -1,5 +1,4 @@
-import { useMemo, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
 	FileText,
 	Download,
@@ -20,17 +19,17 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { useQuote } from "@/orcamentos/services";
+import { useGeneratePdf, useQuote } from "@/orcamentos/services";
 
 export function OrcamentoGerado() {
-	const [isExporting, setIsExporting] = useState(false);
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const { toast } = useToast();
 	const { data: quote } = useQuote(id);
+
+	const { mutate: generatePdf, isPending: isExporting } = useGeneratePdf();
 
 	if (!quote) {
 		return (
@@ -51,24 +50,22 @@ export function OrcamentoGerado() {
 		);
 	}
 
-	const handleExportPDF = async () => {
-		setIsExporting(true);
-		try {
-			// Simula exportação
-			await new Promise((resolve) => setTimeout(resolve, 2000));
-			toast({
-				title: "PDF exportado com sucesso!",
-				description: "O arquivo foi baixado para seu dispositivo.",
-			});
-		} catch (error) {
-			toast({
-				title: "Erro ao exportar PDF",
-				description: "Tente novamente em alguns instantes.",
-				variant: "destructive",
-			});
-		} finally {
-			setIsExporting(false);
-		}
+	const handleExportPDF = async (quoteId: string) => {
+		generatePdf(quoteId, {
+			onSuccess: () => {
+				toast({
+					title: "PDF exportado com sucesso!",
+					description: "O arquivo foi baixado para seu dispositivo.",
+				});
+			},
+			onError: () => {
+				toast({
+					title: "Erro ao exportar PDF",
+					description: "Tente novamente em alguns instantes.",
+					variant: "destructive",
+				});
+			},
+		});
 	};
 
 	const handleWhatsApp = () => {
@@ -215,7 +212,7 @@ export function OrcamentoGerado() {
 			{/* Ações */}
 			<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 				<Button
-					onClick={handleExportPDF}
+					onClick={() => handleExportPDF(quote.id)}
 					disabled={isExporting}
 					className="bg-gradient-primary hover:bg-primary-hover shadow-elegant"
 				>

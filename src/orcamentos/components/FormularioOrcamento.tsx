@@ -72,18 +72,12 @@ export function FormularioOrcamento() {
 	const onSubmit = async (values: FormOrcamento) => {
 		sendQuote(values, {
 			onSuccess: (data) => {
-				console.log("data", data);
-
 				toast({
 					title: "Orçamento gerado com sucesso!",
 					description: "Redirecionando para visualização...",
 				});
 
-				navigate("/orcamento", {
-					state: {
-						quote: data,
-					},
-				});
+				navigate(`/orcamento/${data.id}`);
 			},
 			onError: () => {
 				toast({

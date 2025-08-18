@@ -30,6 +30,39 @@ async function postEnviarOrcamento(payload: FormOrcamento) {
 	}
 }
 
+export const useGeneratePdf = () => {
+	return useMutation({
+		mutationFn: getQuotePdf,
+	});
+};
+
+async function getQuotePdf(quoteId: string) {
+	const res = await fetch(`${QUOTE_PDF_WEBHOOK_URL}/${quoteId}`, {
+		method: "GET",
+	});
+
+	if (!res.ok) {
+		const errorText = await res.text().catch(() => "");
+		throw new Error(errorText || `Falha ao enviar webhook: ${res.status}`);
+	}
+
+	console.log("res", res);
+
+	const blob = await res.blob();
+	const url = URL.createObjectURL(blob);
+
+	const link = document.createElement("a");
+
+	link.href = url;
+	link.download = "orcamento.pdf";
+	link.click();
+
+	window.URL.revokeObjectURL(link.href);
+}
+
+const QUOTE_PDF_WEBHOOK_URL =
+	"https://n8n.matheusousa.dev/webhook/18dee39d-05e6-4b2a-a4a4-67d8ec840ff3/generate-pdf" as const;
+
 // Database mutations
 async function createQuote(data: any) {
 	// Generate quote number
