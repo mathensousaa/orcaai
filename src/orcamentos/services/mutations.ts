@@ -3,10 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import type { FormOrcamento } from "../types";
 import { queryKeys } from "./queries";
 
-// @ts-ignore - Ignore Supabase type errors temporarily
-const supabaseAny = supabase as any;
 
-const WEBHOOK_URL = "https://matheussousa.app.n8n.cloud/webhook-test/2d6dc45e-3582-4527-a639-ef248068022b" as const;
+const WEBHOOK_URL = "https://n8n.matheusousa.dev/webhook-test/2d6dc45e-3582-4527-a639-ef248068022b" as const;
 
 // Webhook function
 async function postEnviarOrcamento(payload: FormOrcamento) {
@@ -37,7 +35,7 @@ async function createQuote(data: any) {
   // Generate quote number
   const quoteNumber = `ORÇ-${Date.now()}`;
   
-  const { data: quote, error } = await supabaseAny
+  const { data: quote, error } = await supabase
     .from("quotes")
     .insert({
       ...data,
@@ -51,7 +49,7 @@ async function createQuote(data: any) {
 }
 
 async function createClient(data: any) {
-  const { data: client, error } = await supabaseAny
+  const { data: client, error } = await supabase
     .from("clients")
     .insert(data)
     .select()
@@ -62,7 +60,7 @@ async function createClient(data: any) {
 }
 
 async function createCompany(data: any) {
-  const { data: company, error } = await supabaseAny
+  const { data: company, error } = await supabase
     .from("companies")
     .insert(data)
     .select()
@@ -73,7 +71,7 @@ async function createCompany(data: any) {
 }
 
 async function deleteQuote(id: string) {
-  const { error } = await supabaseAny
+  const { error } = await supabase
     .from("quotes")
     .update({ deleted_at: new Date().toISOString() })
     .eq("id", id);

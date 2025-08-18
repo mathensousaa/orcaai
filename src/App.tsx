@@ -15,25 +15,25 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <OrcamentoProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <DashboardLayout>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/orcamento" element={<Orcamento />} />
-              <Route path="/historico" element={<Historico />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </DashboardLayout>
-        </BrowserRouter>
-      </OrcamentoProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+	<QueryClientProvider client={queryClient}>
+		<TooltipProvider>
+			<OrcamentoProvider>
+				<Toaster />
+				<Sonner />
+				<BrowserRouter>
+					<DashboardLayout>
+						<Routes>
+							<Route path="/" element={<Home />} />
+							<Route path="/orcamento/:id" element={<Orcamento />} />
+							<Route path="/historico" element={<Historico />} />
+							{/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+							<Route path="*" element={<NotFound />} />
+						</Routes>
+					</DashboardLayout>
+				</BrowserRouter>
+			</OrcamentoProvider>
+		</TooltipProvider>
+	</QueryClientProvider>
 );
 
 export default App;
